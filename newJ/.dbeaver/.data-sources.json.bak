@@ -1,0 +1,34 @@
+{
+	"folders": {},
+	"connections": {
+		"microsoft-17827adda76-1d18492425c7acb4": {
+			"provider": "sqlserver",
+			"driver": "microsoft",
+			"name": "surekha2",
+			"save-password": true,
+			"read-only": false,
+			"configuration": {
+				"host": "DESKTOP-HQ2Q6FD\\SQLEXPRESS",
+				"port": "1433",
+				"database": "surekha2",
+				"url": "jdbc:sqlserver://;serverName=DESKTOP-HQ2Q6FD\\SQLEXPRESS;databaseName=surekha2",
+				"type": "dev",
+				"provider-properties": {
+					"@dbeaver-authentication@": "SQL_SERVER_PASSWORD",
+					"@dbeaver-show-all-schemas@": "false"
+				},
+				"handlers": {}
+			}
+		}
+	},
+	"connection-types": {
+		"dev": {
+			"name": "Development",
+			"color": "255,255,255",
+			"description": "Regular development database",
+			"auto-commit": true,
+			"confirm-execute": false,
+			"confirm-data-change": false
+		}
+	}
+}
