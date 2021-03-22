@@ -1,4 +1,4 @@
-package newJ;
+package DBConnection;
 
 import java.sql.*;
 import javax.swing.*;

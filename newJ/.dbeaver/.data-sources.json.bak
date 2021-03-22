@@ -16,6 +16,60 @@
 				"provider-properties": {
 					"@dbeaver-authentication@": "SQL_SERVER_PASSWORD",
 					"@dbeaver-show-all-schemas@": "false"
+				}
+			}
+		},
+		"microsoft-1782a99a407-20785f1fbe3eceb3": {
+			"provider": "sqlserver",
+			"driver": "microsoft",
+			"name": "master",
+			"save-password": true,
+			"read-only": false,
+			"configuration": {
+				"host": "ttmanagement.database.windows.net",
+				"port": "1433",
+				"database": "master",
+				"url": "jdbc:sqlserver://;serverName=ttmanagement.database.windows.net;databaseName=master",
+				"type": "dev",
+				"provider-properties": {
+					"@dbeaver-authentication@": "SQL_SERVER_PASSWORD",
+					"@dbeaver-show-all-schemas@": "false"
+				}
+			}
+		},
+		"microsoft-1782a9c7f52-7c9b130490030910": {
+			"provider": "sqlserver",
+			"driver": "microsoft",
+			"name": "TTManagement",
+			"save-password": true,
+			"read-only": false,
+			"configuration": {
+				"host": "ttmanagement.database.windows.net",
+				"port": "1433",
+				"database": "TTManagement",
+				"url": "jdbc:sqlserver://;serverName=ttmanagement.database.windows.net;databaseName=TTManagement",
+				"type": "dev",
+				"provider-properties": {
+					"@dbeaver-authentication@": "SQL_SERVER_PASSWORD",
+					"@dbeaver-show-all-schemas@": "false"
+				}
+			}
+		},
+		"microsoft-178588d181b-7a3cf365e243a731": {
+			"provider": "sqlserver",
+			"driver": "microsoft",
+			"name": "surekha",
+			"save-password": true,
+			"read-only": false,
+			"configuration": {
+				"host": "DESKTOP-HQ2Q6FD\\SQLEXPRESS",
+				"port": "1433",
+				"database": "surekha",
+				"url": "jdbc:sqlserver://;serverName=DESKTOP-HQ2Q6FD\\SQLEXPRESS;databaseName=surekha",
+				"type": "dev",
+				"provider-properties": {
+					"@dbeaver-authentication@": "SQL_SERVER_PASSWORD",
+					"@dbeaver-show-all-schemas@": "false"
 				},
 				"handlers": {}
 			}

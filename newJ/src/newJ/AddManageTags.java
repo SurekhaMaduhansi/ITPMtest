@@ -12,8 +12,11 @@ import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.JLayeredPane;
+import javax.swing.JOptionPane;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -21,7 +24,11 @@ import javax.swing.JComboBox;
 import java.awt.SystemColor;
 import javax.swing.JSpinner;
 
+import DBConnection.DBConnecction;
+
 public class AddManageTags extends JFrame {
+	
+	Connection connection=null;
 
 	private JPanel contentPane;
 	private JLayeredPane TagsLayeredPane;
@@ -82,6 +89,9 @@ public class AddManageTags extends JFrame {
 	 * Create the frame.
 	 */
 	public AddManageTags() {
+		
+		connection = DBConnecction.dbConnecter();
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(0, 0, 1370, 728);
 		contentPane = new JPanel();
@@ -173,6 +183,35 @@ public class AddManageTags extends JFrame {
 		AddTagFormPanel.add(btnClearTag);
 		
 		btnSaveTag = new JButton("Save");
+		btnSaveTag.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				try {
+					
+					String query="insert into Tags(TagCode,TagName,RelatedTag) values(?,?,?)";
+					PreparedStatement pstat=connection.prepareStatement(query);
+					
+					pstat.setString(1, txtTagName.getText());
+					pstat.setString(2, txtTagCode.getText());
+					
+					String RelatedT = RelatedTagComboBox.getSelectedItem().toString();
+					pstat.setString(3, RelatedT);
+					
+					//data insertion success message
+					pstat.execute();
+					JOptionPane.showMessageDialog(null, "Data inserted successfully!");
+					
+					pstat.close();
+					
+				}
+				catch(Exception e)
+				{
+					e.printStackTrace();
+				}
+				
+				
+			}
+		});
 		btnSaveTag.setForeground(Color.WHITE);
 		btnSaveTag.setFont(new Font("Leelawadee UI Semilight", Font.BOLD, 16));
 		btnSaveTag.setFocusPainted(false);
