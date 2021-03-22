@@ -43,7 +43,6 @@ public class AddManageTags extends JFrame {
 	private JTextField txtTagName;
 	private JTextField txtTagCode;
 	private JComboBox RelatedTagComboBox;
-	private JButton btnSaveTag;
 	private JButton btnClearTag;
 	private JPanel panel_1;
 	private JTextArea txtrTimeTableManagement;
@@ -58,6 +57,7 @@ public class AddManageTags extends JFrame {
 	private JLabel lblTagCodeViewForm;
 	private JLabel lblTagNameViewForm;
 	private JLabel lblRelatedTagViewForm;
+	private JButton btnSaveTag;
 
 	/**
 	 * Launch the application.
@@ -82,6 +82,13 @@ public class AddManageTags extends JFrame {
 		TagsLayeredPane.add(panel);
 		TagsLayeredPane.repaint();
 		TagsLayeredPane.revalidate();
+	}
+	
+	public void ClearFields()
+	{
+		txtTagName.setText(null);
+		txtTagCode.setText(null);
+		RelatedTagComboBox.setSelectedIndex(-1);
 	}
 	
 
@@ -175,6 +182,11 @@ public class AddManageTags extends JFrame {
 		AddTagFormPanel.add(RelatedTagComboBox);
 		
 		btnClearTag = new JButton("Clear");
+		btnClearTag.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				ClearFields();
+			}
+		});
 		btnClearTag.setForeground(Color.WHITE);
 		btnClearTag.setFont(new Font("Leelawadee UI Semilight", Font.BOLD, 16));
 		btnClearTag.setFocusPainted(false);
@@ -188,7 +200,7 @@ public class AddManageTags extends JFrame {
 				
 				try {
 					
-					String query="insert into Tags(TagCode,TagName,RelatedTag) values(?,?,?)";
+					String query="insert into Tag(TagName,TagCode,RelatedTag) values(?,?,?)";
 					PreparedStatement pstat=connection.prepareStatement(query);
 					
 					pstat.setString(1, txtTagName.getText());
@@ -202,6 +214,7 @@ public class AddManageTags extends JFrame {
 					JOptionPane.showMessageDialog(null, "Data inserted successfully!");
 					
 					pstat.close();
+					ClearFields();
 					
 				}
 				catch(Exception e)
@@ -210,8 +223,10 @@ public class AddManageTags extends JFrame {
 				}
 				
 				
+				
 			}
 		});
+		btnSaveTag.setBounds(110, 388, 89, 23);
 		btnSaveTag.setForeground(Color.WHITE);
 		btnSaveTag.setFont(new Font("Leelawadee UI Semilight", Font.BOLD, 16));
 		btnSaveTag.setFocusPainted(false);

@@ -14,6 +14,8 @@ import javax.swing.JButton;
 import java.awt.Font;
 import java.awt.SystemColor;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.awt.event.ActionEvent;
 import javax.swing.JTextField;
 import javax.swing.border.MatteBorder;
@@ -21,13 +23,18 @@ import javax.swing.UIManager;
 import javax.swing.border.SoftBevelBorder;
 import javax.swing.border.BevelBorder;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JSpinner;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JLabel;
 
+import DBConnection.DBConnecction;
+
 public class AddManageStGrps extends JFrame {
+	
+	Connection connection=null;
 
 	private JPanel contentPane;
 	private JPanel AddStudentGrpPanel_1;
@@ -100,11 +107,23 @@ public class AddManageStGrps extends JFrame {
 		StudentGroupsLayeredPane_1.repaint();
 		StudentGroupsLayeredPane_1.revalidate();
 	}
+	
+	//clear form fields after inserting data and after clicking clear button
+	public void ClearFields()
+	{
+		GrpID.setText(null);
+		SubGrpID.setText(null);
+		AcademicYrSemList.setSelectedIndex(-1);
+		ProgramListCB.setSelectedIndex(-1);
+	}
 
 	/**
 	 * Create the frame.
 	 */
 	public AddManageStGrps() {
+		
+		connection = DBConnecction.dbConnecter();
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(0, 0, 1370, 728);
 		contentPane = new JPanel();
@@ -165,22 +184,7 @@ public class AddManageStGrps extends JFrame {
 		txtAddNewStudent.setText("Add New Student Group");
 		txtAddNewStudent.setColumns(10);
 		
-		btnGenerateGID = new JButton("Generate GroupID");
-		btnGenerateGID.setForeground(Color.WHITE);
-		btnGenerateGID.setFont(new Font("Leelawadee UI Semilight", Font.BOLD, 14));
-		btnGenerateGID.setFocusPainted(false);
-		btnGenerateGID.setBackground(new Color(31, 58, 147));
-		btnGenerateGID.setBounds(662, 85, 220, 38);
-		AddFormPanel.add(btnGenerateGID);
 		
-		btnGenerateSubGID = new JButton("Generate Sub GroupID");
-		btnGenerateSubGID.setActionCommand("Generate Sub GroupID");
-		btnGenerateSubGID.setForeground(Color.WHITE);
-		btnGenerateSubGID.setFont(new Font("Leelawadee UI Semilight", Font.BOLD, 14));
-		btnGenerateSubGID.setFocusPainted(false);
-		btnGenerateSubGID.setBackground(new Color(31, 58, 147));
-		btnGenerateSubGID.setBounds(662, 248, 220, 38);
-		AddFormPanel.add(btnGenerateSubGID);
 		
 		GroupNoSpinner = new JSpinner();
 		GroupNoSpinner.setBounds(280, 234, 222, 29);
@@ -201,6 +205,12 @@ public class AddManageStGrps extends JFrame {
 		AddFormPanel.add(SubGrpID);
 		
 		btnClearAdd = new JButton("Clear");
+		btnClearAdd.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				ClearFields();
+			}
+		});
 		btnClearAdd.setForeground(Color.WHITE);
 		btnClearAdd.setFont(new Font("Leelawadee UI Semilight", Font.BOLD, 14));
 		btnClearAdd.setFocusPainted(false);
@@ -209,12 +219,124 @@ public class AddManageStGrps extends JFrame {
 		AddFormPanel.add(btnClearAdd);
 		
 		btnSaveAdd = new JButton("Save");
+		btnSaveAdd.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				try {
+					
+					String query1 = "insert into StudentGroups(AcademicYrSem,Program,GroupNo,SubGroupNo,GroupID,SubGroupID) values(?,?,?,?,?,?)";
+					PreparedStatement pstat=connection.prepareStatement(query1);
+					
+					String AcYrSem = AcademicYrSemList.getSelectedItem().toString();
+					pstat.setString(1, AcYrSem);
+					
+					String prog = ProgramListCB.getSelectedItem().toString();
+					pstat.setString(2, prog);
+					
+					String gpSpinner = GroupNoSpinner.getValue().toString();
+					pstat.setString(3, gpSpinner);
+					
+					String subgpSpinner = SubGroupNoSpinner.getValue().toString();
+					pstat.setString(4, subgpSpinner);
+					
+					//get generated group id and sub group id
+					pstat.setString(5, GrpID.getText());
+					pstat.setString(6, SubGrpID.getText());
+					
+					//data insertion success message
+					pstat.execute();
+					JOptionPane.showMessageDialog(null, "Data inserted successfully!");
+					
+					pstat.close();
+					ClearFields();
+					
+					
+				}
+				catch(Exception e1)
+				{
+					e1.printStackTrace();
+				}
+				
+				
+			}
+		});
 		btnSaveAdd.setForeground(Color.WHITE);
 		btnSaveAdd.setFont(new Font("Leelawadee UI Semilight", Font.BOLD, 14));
 		btnSaveAdd.setFocusPainted(false);
 		btnSaveAdd.setBackground(new Color(27, 163, 156));
 		btnSaveAdd.setBounds(719, 402, 132, 38);
 		AddFormPanel.add(btnSaveAdd);
+		
+		
+		//Generate Group Id
+		btnGenerateGID = new JButton("Generate GroupID");
+		btnGenerateGID.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				try {
+					
+					String AcYrSem = AcademicYrSemList.getSelectedItem().toString();	
+					String prog = ProgramListCB.getSelectedItem().toString();
+					String gpSpinner = GroupNoSpinner.getValue().toString();
+					
+					String generatedGrpId = AcYrSem+"."+prog+"."+ gpSpinner;
+					
+					
+					GrpID.setText(generatedGrpId);
+					
+					
+					
+				}
+				catch(Exception e2)
+				{
+					e2.printStackTrace();
+				}
+				
+			}
+		});
+		btnGenerateGID.setForeground(Color.WHITE);
+		btnGenerateGID.setFont(new Font("Leelawadee UI Semilight", Font.BOLD, 14));
+		btnGenerateGID.setFocusPainted(false);
+		btnGenerateGID.setBackground(new Color(31, 58, 147));
+		btnGenerateGID.setBounds(662, 85, 220, 38);
+		AddFormPanel.add(btnGenerateGID);
+		
+		
+	//Generate Sub Group Id
+		btnGenerateSubGID = new JButton("Generate Sub GroupID");
+		btnGenerateSubGID.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				try {
+					
+					String AcYrSem = AcademicYrSemList.getSelectedItem().toString();	
+					String prog = ProgramListCB.getSelectedItem().toString();
+					String gpSpinner = GroupNoSpinner.getValue().toString();
+					String subgpSpinner = SubGroupNoSpinner.getValue().toString();
+					
+					
+					String generatedSubGrpId = AcYrSem+"."+prog+"."+ gpSpinner+"."+subgpSpinner;
+					
+					SubGrpID.setText(generatedSubGrpId);
+					
+					
+				}
+				catch(Exception e3)
+				{
+					e3.printStackTrace();
+				}
+				
+				
+			}
+		});
+		btnGenerateSubGID.setActionCommand("Generate Sub GroupID");
+		btnGenerateSubGID.setForeground(Color.WHITE);
+		btnGenerateSubGID.setFont(new Font("Leelawadee UI Semilight", Font.BOLD, 14));
+		btnGenerateSubGID.setFocusPainted(false);
+		btnGenerateSubGID.setBackground(new Color(31, 58, 147));
+		btnGenerateSubGID.setBounds(662, 248, 220, 38);
+		AddFormPanel.add(btnGenerateSubGID);
+		
 		
 		String[] AYSList = {"Y1S1","Y1S2","Y2S1","Y2S2","Y3S1","Y3S2","Y4S1","Y4S2"};
 	    AcademicYrSemList = new JComboBox(AYSList);
