@@ -1,4 +1,4 @@
-package newJ;
+package Tags;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
@@ -11,12 +11,16 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -25,6 +29,10 @@ import java.awt.SystemColor;
 import javax.swing.JSpinner;
 
 import DBConnection.DBConnecction;
+import net.proteanit.sql.DbUtils;
+
+import javax.swing.JTable;
+import javax.swing.JScrollPane;
 
 public class AddManageTags extends JFrame {
 	
@@ -50,14 +58,20 @@ public class AddManageTags extends JFrame {
 	private JPanel ViewTagsPanel;
 	private JPanel GetTagsFormPanel;
 	private JComboBox RelatedTagListView;
-	private JTextField textField;
-	private JTextField textField_1;
+	private JTextField textviewTagName;
+	private JTextField textViewTagCodeField;
 	private JButton BtnClearTagView;
 	private JButton BtnUpdateTag;
 	private JLabel lblTagCodeViewForm;
 	private JLabel lblTagNameViewForm;
 	private JLabel lblRelatedTagViewForm;
 	private JButton btnSaveTag;
+	private JTable ViewTagsTable;
+	private JScrollPane scrollPane;
+	private JButton BtnDeleteTagView;
+	private JTextField SearchField;
+	private JLabel lblTagIDeViewForm;
+	private JTextField textTagID;
 
 	/**
 	 * Launch the application.
@@ -89,6 +103,29 @@ public class AddManageTags extends JFrame {
 		txtTagName.setText(null);
 		txtTagCode.setText(null);
 		RelatedTagComboBox.setSelectedIndex(-1);
+		
+		RelatedTagListView.setSelectedIndex(-1);
+		textviewTagName.setText(null);
+		textViewTagCodeField.setText(null);
+		
+		
+	}
+	
+	public void RefreshTagsTable()
+	{
+		try {
+			
+			String refreshque="select * from Tag";
+			PreparedStatement psat= connection.prepareStatement(refreshque);
+			ResultSet rs=psat.executeQuery();
+			
+			ViewTagsTable.setModel(DbUtils.resultSetToTableModel(rs));
+			
+		}
+		catch(Exception E2)
+		{
+			E2.printStackTrace();
+		}
 	}
 	
 
@@ -165,11 +202,13 @@ public class AddManageTags extends JFrame {
 		AddTagFormPanel.add(TagRelatedLabel);
 		
 		txtTagName = new JTextField();
+		txtTagName.setFont(new Font("Leelawadee UI Semilight", Font.BOLD, 13));
 		txtTagName.setBounds(136, 98, 235, 23);
 		AddTagFormPanel.add(txtTagName);
 		txtTagName.setColumns(10);
 		
 		txtTagCode = new JTextField();
+		txtTagCode.setFont(new Font("Leelawadee UI Semilight", Font.BOLD, 13));
 		txtTagCode.setColumns(10);
 		txtTagCode.setBounds(136, 174, 235, 23);
 		AddTagFormPanel.add(txtTagCode);
@@ -177,6 +216,7 @@ public class AddManageTags extends JFrame {
 		
 		String[] RelatedTagList = {"Lecture" , "Tutorial", "Laboratory","Evaluation"};
 		RelatedTagComboBox = new JComboBox(RelatedTagList);
+		RelatedTagComboBox.setFont(new Font("Leelawadee UI Semilight", Font.BOLD, 13));
 		RelatedTagComboBox.setSelectedIndex(-1);
 		RelatedTagComboBox.setBounds(136, 248, 235, 23);
 		AddTagFormPanel.add(RelatedTagComboBox);
@@ -245,14 +285,84 @@ public class AddManageTags extends JFrame {
 		ViewTagsPanel.setLayout(null);
 		ViewTagsPanel.setBorder(null);
 		ViewTagsPanel.setBackground(new Color(228, 241, 254));
-		ViewTagsPanel.setBounds(0, 0, 726, 483);
+		ViewTagsPanel.setBounds(0, 0, 726, 494);
 		ManageTagsPanel.add(ViewTagsPanel);
+		
+		scrollPane = new JScrollPane();
+		scrollPane.setFont(new Font("Leelawadee UI Semilight", Font.BOLD, 14));
+		scrollPane.setBackground(Color.WHITE);
+		scrollPane.setBounds(26, 61, 644, 422);
+		ViewTagsPanel.add(scrollPane);
+		
+		ViewTagsTable = new JTable();
+		ViewTagsTable.setRowHeight(18);
+		ViewTagsTable.setBorder(null);
+		ViewTagsTable.setShowHorizontalLines(false);
+		ViewTagsTable.setBackground(Color.WHITE);
+		ViewTagsTable.setFont(new Font("Leelawadee UI Semilight", Font.BOLD, 14));
+		
+		ViewTagsTable.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				
+					try {
+						
+						int row = ViewTagsTable.getSelectedRow();
+						String ID1=(ViewTagsTable.getModel().getValueAt(row, 0)).toString();
+						
+						String query ="select * from Tag where TagID='"+ID1+"'";
+						PreparedStatement psat=connection.prepareStatement(query);
+						
+						ResultSet rs=psat.executeQuery();
+						
+						while(rs.next()) {
+							
+							textTagID.setText(rs.getString("TagID"));
+							textviewTagName.setText(rs.getString("TagName"));
+							textViewTagCodeField.setText(rs.getString("TagCode"));
+							RelatedTagListView.setSelectedItem(rs.getString("RelatedTag"));
+						}
+						
+						psat.close();
+						
+					}
+					catch(Exception E)
+					{
+						E.printStackTrace();
+					}
+				
+				}
+			
+		
+			}
+		
+				
+		);
+		
+		
+		scrollPane.setViewportView(ViewTagsTable);
+		
+		SearchField = new JTextField();
+		SearchField.setFont(new Font("Leelawadee UI Semilight", Font.ITALIC, 14));
+		SearchField.setBackground(new Color(255, 255, 255));
+		SearchField.setText("search");
+		SearchField.setColumns(10);
+		SearchField.setBounds(356, 21, 185, 27);
+		ViewTagsPanel.add(SearchField);
+		
+		JButton BtnSearchTag = new JButton("Search");
+		BtnSearchTag.setForeground(Color.WHITE);
+		BtnSearchTag.setFont(new Font("Leelawadee UI Semilight", Font.BOLD, 14));
+		BtnSearchTag.setFocusPainted(false);
+		BtnSearchTag.setBackground(new Color(31, 58, 147));
+		BtnSearchTag.setBounds(557, 21, 123, 27);
+		ViewTagsPanel.add(BtnSearchTag);
 		
 		GetTagsFormPanel = new JPanel();
 		GetTagsFormPanel.setLayout(null);
 		GetTagsFormPanel.setBorder(null);
 		GetTagsFormPanel.setBackground(new Color(197, 239, 247));
-		GetTagsFormPanel.setBounds(770, 0, 443, 483);
+		GetTagsFormPanel.setBounds(770, 0, 443, 494);
 		ManageTagsPanel.add(GetTagsFormPanel);
 		
 		
@@ -262,46 +372,128 @@ public class AddManageTags extends JFrame {
 		RelatedTagListView.setBounds(220, 202, 185, 24);
 		GetTagsFormPanel.add(RelatedTagListView);
 		
-		textField = new JTextField();
-		textField.setColumns(10);
-		textField.setBounds(220, 80, 185, 24);
-		GetTagsFormPanel.add(textField);
+		textviewTagName = new JTextField();
+		textviewTagName.setColumns(10);
+		textviewTagName.setBounds(220, 80, 185, 24);
+		GetTagsFormPanel.add(textviewTagName);
 		
-		textField_1 = new JTextField();
-		textField_1.setColumns(10);
-		textField_1.setBounds(220, 134, 185, 24);
-		GetTagsFormPanel.add(textField_1);
+		textViewTagCodeField = new JTextField();
+		textViewTagCodeField.setColumns(10);
+		textViewTagCodeField.setBounds(220, 134, 185, 24);
+		GetTagsFormPanel.add(textViewTagCodeField);
 		
 		BtnClearTagView = new JButton("Clear");
+		BtnClearTagView.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				ClearFields();
+			}
+		});
 		BtnClearTagView.setForeground(Color.WHITE);
 		BtnClearTagView.setFont(new Font("Leelawadee UI Semilight", Font.BOLD, 14));
 		BtnClearTagView.setFocusPainted(false);
 		BtnClearTagView.setBackground(new Color(31, 58, 147));
-		BtnClearTagView.setBounds(152, 331, 123, 30);
+		BtnClearTagView.setBounds(152, 305, 123, 30);
 		GetTagsFormPanel.add(BtnClearTagView);
-		
+	
+	//update records
 		BtnUpdateTag = new JButton("Update");
+		BtnUpdateTag.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				try {
+					
+					String query="update Tag set  TagName='"+textviewTagName.getText()+"' , TagCode='"+textViewTagCodeField.getText()+"' ,RelatedTag='"+RelatedTagListView.getSelectedItem()+"' where TagID='"+textTagID.getText()+"' ";                    
+					PreparedStatement psat=connection.prepareStatement(query);
+					
+					psat.execute();
+					
+					JOptionPane.showMessageDialog(null, "Update Sucsessful!");
+					
+					psat.close();
+					ClearFields();
+					
+				}
+				catch(Exception e5)
+				{
+					e5.printStackTrace();
+				}
+				
+				
+				//to refresh the table after updating
+				RefreshTagsTable();
+				
+				
+			}
+		});
 		BtnUpdateTag.setForeground(Color.WHITE);
 		BtnUpdateTag.setFont(new Font("Leelawadee UI Semilight", Font.BOLD, 14));
 		BtnUpdateTag.setFocusPainted(false);
 		BtnUpdateTag.setBackground(new Color(27, 163, 156));
-		BtnUpdateTag.setBounds(152, 396, 123, 30);
+		BtnUpdateTag.setBounds(152, 367, 123, 30);
 		GetTagsFormPanel.add(BtnUpdateTag);
 		
 		lblTagCodeViewForm = new JLabel("Tag Code :");
 		lblTagCodeViewForm.setFont(new Font("Leelawadee UI Semilight", Font.BOLD, 14));
-		lblTagCodeViewForm.setBounds(26, 78, 209, 24);
+		lblTagCodeViewForm.setBounds(26, 132, 209, 24);
 		GetTagsFormPanel.add(lblTagCodeViewForm);
 		
 		lblTagNameViewForm = new JLabel("Tag Name :");
 		lblTagNameViewForm.setFont(new Font("Leelawadee UI Semilight", Font.BOLD, 14));
-		lblTagNameViewForm.setBounds(26, 132, 209, 24);
+		lblTagNameViewForm.setBounds(26, 80, 209, 24);
 		GetTagsFormPanel.add(lblTagNameViewForm);
 		
 		lblRelatedTagViewForm = new JLabel("Reated Tag :");
 		lblRelatedTagViewForm.setFont(new Font("Leelawadee UI Semilight", Font.BOLD, 14));
 		lblRelatedTagViewForm.setBounds(26, 200, 209, 24);
 		GetTagsFormPanel.add(lblRelatedTagViewForm);
+		
+		
+	//delete a record
+		BtnDeleteTagView = new JButton("Delete");
+		BtnDeleteTagView.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				try {
+					
+					String deletequery="delete from Tag where TagID='"+textTagID.getText()+"'";                      
+					PreparedStatement psat=connection.prepareStatement(deletequery);
+					
+					psat.execute();
+					
+					JOptionPane.showMessageDialog(null, "Details Deleted Sucsessfully!");
+					
+					psat.close();
+					ClearFields();
+					
+				}
+				catch(Exception e3)
+				{
+					e3.printStackTrace();
+				}
+				
+				RefreshTagsTable();
+				
+				
+			}
+		});
+		BtnDeleteTagView.setBounds(152, 431, 123, 30);
+		GetTagsFormPanel.add(BtnDeleteTagView);
+		BtnDeleteTagView.setForeground(Color.WHITE);
+		BtnDeleteTagView.setFont(new Font("Leelawadee UI Semilight", Font.BOLD, 14));
+		BtnDeleteTagView.setFocusPainted(false);
+		BtnDeleteTagView.setBackground(new Color(210, 77, 87));
+		
+		
+		lblTagIDeViewForm = new JLabel("Tag ID:");
+		lblTagIDeViewForm.setFont(new Font("Leelawadee UI Semilight", Font.BOLD, 14));
+		lblTagIDeViewForm.setBounds(26, 31, 209, 24);
+		GetTagsFormPanel.add(lblTagIDeViewForm);
+		
+		textTagID = new JTextField();
+		textTagID.setEditable(false);
+		textTagID.setColumns(10);
+		textTagID.setBounds(220, 31, 185, 24);
+		GetTagsFormPanel.add(textTagID);
 		
 	//Add Tags	
 		btnAddTags = new JButton("Add Tags");
@@ -326,6 +518,21 @@ public class AddManageTags extends JFrame {
 		{
 			public void actionPerformed(ActionEvent e) {
 				SwitchTagPanels(ManageTagsPanel); //switch to manage tag panel
+				
+				try {
+					
+					String query = "select * from Tag";
+					PreparedStatement psat = connection.prepareStatement(query);
+					ResultSet rs= psat.executeQuery();
+					
+					ViewTagsTable.setModel(DbUtils.resultSetToTableModel(rs));
+					
+				}
+				catch(Exception e4)
+				{
+					e4.printStackTrace();
+				}
+				
 			}
 		});
 		

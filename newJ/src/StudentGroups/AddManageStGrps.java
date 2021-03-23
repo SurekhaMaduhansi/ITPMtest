@@ -1,4 +1,4 @@
-package newJ;
+package StudentGroups;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
@@ -187,19 +187,23 @@ public class AddManageStGrps extends JFrame {
 		
 		
 		GroupNoSpinner = new JSpinner();
+		GroupNoSpinner.setFont(new Font("Leelawadee UI Semilight", Font.BOLD, 13));
 		GroupNoSpinner.setBounds(280, 234, 222, 29);
 		AddFormPanel.add(GroupNoSpinner);
 		
 		SubGroupNoSpinner = new JSpinner();
+		SubGroupNoSpinner.setFont(new Font("Leelawadee UI Semilight", Font.BOLD, 13));
 		SubGroupNoSpinner.setBounds(280, 295, 222, 29);
 		AddFormPanel.add(SubGroupNoSpinner);
 		
 		GrpID = new JTextField();
+		GrpID.setFont(new Font("Leelawadee UI Semilight", Font.BOLD, 13));
 		GrpID.setBounds(662, 168, 220, 29);
 		AddFormPanel.add(GrpID);
 		GrpID.setColumns(10);
 		
 		SubGrpID = new JTextField();
+		SubGrpID.setFont(new Font("Leelawadee UI Semilight", Font.BOLD, 13));
 		SubGrpID.setColumns(10);
 		SubGrpID.setBounds(662, 328, 220, 29);
 		AddFormPanel.add(SubGrpID);
@@ -279,11 +283,10 @@ public class AddManageStGrps extends JFrame {
 					String prog = ProgramListCB.getSelectedItem().toString();
 					String gpSpinner = GroupNoSpinner.getValue().toString();
 					
+					
+				
 					String generatedGrpId = AcYrSem+"."+prog+"."+ gpSpinner;
-					
-					
 					GrpID.setText(generatedGrpId);
-					
 					
 					
 				}
@@ -314,10 +317,11 @@ public class AddManageStGrps extends JFrame {
 					String gpSpinner = GroupNoSpinner.getValue().toString();
 					String subgpSpinner = SubGroupNoSpinner.getValue().toString();
 					
-					
+	
+						
 					String generatedSubGrpId = AcYrSem+"."+prog+"."+ gpSpinner+"."+subgpSpinner;
-					
 					SubGrpID.setText(generatedSubGrpId);
+		
 					
 					
 				}

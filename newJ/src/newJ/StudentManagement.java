@@ -4,19 +4,30 @@ import java.awt.Color;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
+
+import StudentGroups.AddManageStGrps;
+import Tags.AddManageTags;
+
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.SwingConstants;
 import java.awt.Font;
+import java.awt.SystemColor;
 import java.awt.Cursor;
 
 public class StudentManagement {
 
+	private JPanel contentPane;
 	private JFrame frame;
 	private JButton TagManagement;
+	private JPanel panel_1;
+	private JTextArea txtrTimeTableManagement;
 
 	/**
 	 * Launch the application.
@@ -50,6 +61,23 @@ public class StudentManagement {
 		frame.setBounds(0, 0, 1370, 728);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
+		
+		/*
+		panel_1 = new JPanel();
+		panel_1.setBounds(0, 0, 1365, 75);
+		panel_1.setForeground(Color.WHITE);
+		panel_1.setBackground(new Color(75, 119, 190));
+		panel_1.setBorder(new LineBorder(SystemColor.textHighlight, 2));
+		contentPane.add(panel_1);
+		
+		txtrTimeTableManagement = new JTextArea();
+		txtrTimeTableManagement.setEditable(false);
+		txtrTimeTableManagement.setBackground(new Color(75, 119, 190));
+		txtrTimeTableManagement.setForeground(Color.WHITE);
+		txtrTimeTableManagement.setFont(new Font("Segoe UI Semilight", Font.BOLD, 26));
+		txtrTimeTableManagement.setText("Timetable Management System");
+		panel_1.add(txtrTimeTableManagement);*/
+		
 		
 		JButton StudentGroupManagementBtn = new JButton("Student Group Management");
 		StudentGroupManagementBtn.setFocusPainted(false);
